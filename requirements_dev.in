@@ -1,0 +1,4 @@
+black
+django>=3.2
+tox
+- e .
