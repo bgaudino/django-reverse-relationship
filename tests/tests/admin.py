@@ -7,7 +7,7 @@ from . import models
 
 @admin.register(models.Pizza)
 class PizzaAdmin(admin.ModelAdmin):
-    pass
+    filter_horizontal = ["toppings"]
 
 
 @admin.register(models.Topping)

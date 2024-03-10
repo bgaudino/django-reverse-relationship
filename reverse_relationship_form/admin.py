@@ -5,6 +5,10 @@ from django.forms.models import ALL_FIELDS
 from .forms import reverse_relationship_form_factory
 
 
+class ReverseFilterSelectMultiple(FilteredSelectMultiple):
+    template_name = "admin/widgets/select.html"
+
+
 class ReverseRelationshipAdmin(admin.ModelAdmin):
     related_fields = None
     related_filter_horizontal = None
@@ -28,7 +32,7 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
             else:
                 # Invalid field
                 continue
-            widgets[field] = FilteredSelectMultiple(
+            widgets[field] = ReverseFilterSelectMultiple(
                 verbose_name=verbose_name,
                 is_stacked=field in filter_vertical,
             )
