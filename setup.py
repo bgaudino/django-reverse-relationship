@@ -9,7 +9,7 @@ install_requires = [
 ]
 
 setup(
-    name="django-authtools",
+    name="django-reverse-relationship-form",
     version="0.1.0.dev0",
     author="Brian Gaudino",
     author_email="bgaudino@gmail.com",
