@@ -1,11 +1,13 @@
+from django.contrib.auth import get_user_model
 from django.forms.models import ALL_FIELDS
 from django.test import TestCase
+from django.urls import reverse
 
 from . import models
 from reverse_relationship_form.forms import reverse_relationship_form_factory
 
 
-class ReverseRelationshipFormTestCase(TestCase):
+class BaseTestCase(TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # For django < 4.0
@@ -15,7 +17,10 @@ class ReverseRelationshipFormTestCase(TestCase):
     def setUp(self):
         self.veggie = models.Pizza.objects.create(name="Veggie")
         self.mediterranean = models.Pizza.objects.create(name="Mediterranean")
+        self.mushrooms = models.Topping.objects.create(name="Mushrooms")
 
+
+class ReverseRelationshipFormTestCase(BaseTestCase):
     def get_form_class(self, **kwargs):
         related_fields = kwargs.pop("related_fields", ["pizza_set"])
         return reverse_relationship_form_factory(
@@ -53,3 +58,36 @@ class ReverseRelationshipFormTestCase(TestCase):
         self.veggie.toppings.add(mushrooms)
         form = self.get_form_class()(instance=mushrooms)
         self.assertQuerySetEqual(form.fields["pizza_set"].initial, [self.veggie])
+
+
+class ReverseRelationshipAdminTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = get_user_model().objects.create_superuser(username="test")
+        self.client.force_login(self.user)
+
+    def test_add_form_renders_related_field(self):
+        res = self.client.get(reverse("admin:tests_topping_add"))
+        self.assertContains(res, '<select name="pizza_set"')
+
+    def test_change_form_renders_related_field(self):
+        res = self.client.get(
+            reverse("admin:tests_topping_change", args=[self.mushrooms.pk])
+        )
+        self.assertContains(res, '<select name="pizza_set"')
+
+    def test_add_form_saves_related_fields(self):
+        self.client.post(
+            reverse("admin:tests_topping_add"),
+            {"name": "Peppers", "pizza_set": [self.veggie.pk]},
+        )
+        peppers = models.Topping.objects.get(name="Peppers")
+        self.assertQuerySetEqual(peppers.pizza_set.all(), [self.veggie])
+
+    def test_change_form_saves_related_fields(self):
+        self.client.post(
+            reverse("admin:tests_topping_change", args=[self.mushrooms.pk]),
+            {"name": "Peppers", "pizza_set": [self.mediterranean.pk]},
+        )
+        peppers = models.Topping.objects.get(name="Peppers")
+        self.assertQuerySetEqual(peppers.pizza_set.all(), [self.mediterranean])
