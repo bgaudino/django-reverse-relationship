@@ -6,7 +6,7 @@ from .forms import reverse_relationship_form_factory
 
 
 class ReverseFilterSelectMultiple(FilteredSelectMultiple):
-    template_name = "admin/widgets/select.html"
+    template_name = "admin/widgets/reverse_filter_select_multiple.html"
 
 
 class ReverseRelationshipAdmin(admin.ModelAdmin):
