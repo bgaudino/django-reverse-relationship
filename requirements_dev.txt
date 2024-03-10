@@ -1,4 +1,7 @@
 black
+coverage
 django>=3.2
+pytest
+pytest-django
 tox
 - e .
