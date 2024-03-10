@@ -40,8 +40,3 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
             widgets=widgets,
             related_fields=self.related_fields,
         )
-
-    def save_related(self, request, form, formsets, change) -> None:
-        super().save_related(request, form, formsets, change)
-        if hasattr(form, "save_reverse_related"):
-            form.save_reverse_related()

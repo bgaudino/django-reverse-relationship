@@ -53,22 +53,12 @@ def reverse_relationship_form_factory(
             for field in related_objects:
                 self.fields[field].initial = getattr(self.instance, field).all()
 
-    def _save_reverse_related(self):
+    def _save_m2m(self):
         for field in related_objects:
             getattr(self.instance, field).set(self.cleaned_data[field])
 
-    def save(self, commit=True):
-        instance = super(form, self).save(commit=False)
-        if commit:
-            instance.save()
-            self._save_reverse_related()
-        else:
-            self.save_reverse_related = self._save_reverse_related
-        return instance
-
     form_class_attrs["__init__"] = __init__
-    form_class_attrs["save"] = save
-    form_class_attrs["_save_reverse_related"] = _save_reverse_related
+    form_class_attrs["_save_m2m"] = _save_m2m
 
     class_name = model.__name__ + "ReverseRelationshipForm"
 
