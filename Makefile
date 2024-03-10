@@ -1,2 +1,7 @@
+COVERAGE_COMMAND=
+
 test:
-	DJANGO_SETTINGS_MODULE=tests.settings pytest tests/tests/tests.py
+	$(COVERAGE_COMMAND) pytest tests/tests/tests.py
+
+coverage:
+	+make test COVERAGE_COMMAND='coverage run -m'
