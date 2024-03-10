@@ -113,7 +113,7 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
         ToppingAdmin.related_filter_vertical = None
         res = self.client.get(reverse("admin:tests_topping_add"))
         self.assertNotIsInstance(
-            res.context["adminform"].fields["pizza_set"].widget,
+            res.context["adminform"].form.fields["pizza_set"].widget,
             ReverseFilterSelectMultiple,
         )
 
@@ -121,7 +121,7 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
         ToppingAdmin.related_filter_horizontal = ["pizza_set"]
         ToppingAdmin.related_filter_vertical = None
         res = self.client.get(reverse("admin:tests_topping_add"))
-        widget = res.context["adminform"].fields["pizza_set"].widget
+        widget = res.context["adminform"].form.fields["pizza_set"].widget
         self.assertIsInstance(widget, ReverseFilterSelectMultiple)
         self.assertFalse(widget.is_stacked)
 
@@ -129,6 +129,6 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
         ToppingAdmin.related_filter_horizontal = None
         ToppingAdmin.related_filter_vertical = ["pizza_set"]
         res = self.client.get(reverse("admin:tests_topping_add"))
-        widget = res.context["adminform"].fields["pizza_set"].widget
+        widget = res.context["adminform"].form.fields["pizza_set"].widget
         self.assertIsInstance(widget, ReverseFilterSelectMultiple)
         self.assertTrue(widget.is_stacked)
