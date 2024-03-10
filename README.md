@@ -31,7 +31,7 @@ class Pizza(models.Model):
 
 ```
 
-A model form for Pizza would include a `MultipleModelSelectField` but a model form for topping would not. Enter, `reverse_relationship_form_factory`.
+A model form for Pizza would include a `MultipleModelSelectField` but a model form for topping would not. Enter, `reverse_relationship_form_factory`. Notice that because I didn't set a related name for `toppings`, I'm using Django's default of the child model name + '_set'. If you specified a related name, you would list that under `related_fields` instead.
 
 
 ```python
