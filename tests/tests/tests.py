@@ -4,6 +4,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from . import models
+from .admin import ToppingAdmin
+from reverse_relationship_form.admin import ReverseFilterSelectMultiple
 from reverse_relationship_form.forms import reverse_relationship_form_factory
 
 
@@ -91,3 +93,42 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
         )
         peppers = models.Topping.objects.get(name="Peppers")
         self.assertQuerySetEqual(peppers.pizza_set.all(), [self.mediterranean])
+
+    def test_default_related_queryset(self):
+        ToppingAdmin.related_querysets = None
+        res = self.client.get(reverse("admin:tests_topping_add"))
+        self.assertContains(res, '<option value="1">Veggie</option>')
+        self.assertContains(res, '<option value="2">Mediterranean</option>')
+
+    def test_custom_related_querset(self):
+        ToppingAdmin.related_querysets = {
+            "pizza_set": models.Pizza.objects.filter(name__istartswith="v")
+        }
+        res = self.client.get(reverse("admin:tests_topping_add"))
+        self.assertContains(res, '<option value="1">Veggie</option>')
+        self.assertNotContains(res, '<option value="2">Mediterranean</option>')
+
+    def test_default_widget(self):
+        ToppingAdmin.related_filter_horizontal = None
+        ToppingAdmin.related_filter_vertical = None
+        res = self.client.get(reverse("admin:tests_topping_add"))
+        self.assertNotIsInstance(
+            res.context["adminform"].fields["pizza_set"].widget,
+            ReverseFilterSelectMultiple,
+        )
+
+    def test_filter_horizontal(self):
+        ToppingAdmin.related_filter_horizontal = ["pizza_set"]
+        ToppingAdmin.related_filter_vertical = None
+        res = self.client.get(reverse("admin:tests_topping_add"))
+        widget = res.context["adminform"].fields["pizza_set"].widget
+        self.assertIsInstance(widget, ReverseFilterSelectMultiple)
+        self.assertFalse(widget.is_stacked)
+
+    def test_filter_vertical(self):
+        ToppingAdmin.related_filter_horizontal = None
+        ToppingAdmin.related_filter_vertical = ["pizza_set"]
+        res = self.client.get(reverse("admin:tests_topping_add"))
+        widget = res.context["adminform"].fields["pizza_set"].widget
+        self.assertIsInstance(widget, ReverseFilterSelectMultiple)
+        self.assertTrue(widget.is_stacked)

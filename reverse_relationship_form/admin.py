@@ -11,6 +11,7 @@ class ReverseFilterSelectMultiple(FilteredSelectMultiple):
 
 class ReverseRelationshipAdmin(admin.ModelAdmin):
     related_fields = None
+    related_querysets = None
     related_filter_horizontal = None
     related_filter_vertical = None
 
@@ -20,27 +21,38 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
 
         exclude = self.get_exclude(request, obj) or []
         exclude.extend(self.get_readonly_fields(request, obj))
+        return reverse_relationship_form_factory(
+            self.model,
+            fields=self.fields or ALL_FIELDS,
+            exclude=exclude,
+            widgets=self.get_related_widgets(request, obj),
+            related_fields=self.related_fields,
+            related_querysets=self.get_related_querysets(request, obj),
+        )
+
+    def get_related_objects(self):
+        return {
+            obj.get_accessor_name(): obj for obj in self.model._meta.related_objects
+        }
+
+    def get_related_querysets(self, request, obj=None):
+        return self.related_querysets
+
+    def get_related_widgets(self, request, obj=None):
         filter_horizontal = self.related_filter_horizontal or []
         filter_vertical = self.related_filter_vertical or []
         filter_fields = [*filter_horizontal, *filter_vertical]
+        related_objects = self.get_related_objects()
         widgets = {}
         for field in filter_fields:
-            for obj in self.model._meta.related_objects:
-                if field == obj.get_accessor_name():
-                    verbose_name = obj.related_model._meta.verbose_name_plural
-                    break
-            else:
+            try:
+                rel_obj = related_objects[field]
+                verbose_name = rel_obj.related_model._meta.verbose_name_plural
+            except KeyError:
                 # Invalid field
                 continue
             widgets[field] = ReverseFilterSelectMultiple(
                 verbose_name=verbose_name,
                 is_stacked=field in filter_vertical,
             )
-
-        return reverse_relationship_form_factory(
-            self.model,
-            fields=self.fields or ALL_FIELDS,
-            exclude=exclude,
-            widgets=widgets,
-            related_fields=self.related_fields,
-        )
+        return widgets
