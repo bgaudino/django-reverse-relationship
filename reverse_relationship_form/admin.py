@@ -1,3 +1,5 @@
+from functools import partial
+
 from django.contrib import admin
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms.models import ALL_FIELDS
@@ -26,6 +28,7 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
             fields=self.fields or ALL_FIELDS,
             exclude=exclude,
             widgets=self.get_related_widgets(request, obj),
+            formfield_callback=partial(self.formfield_for_dbfield, request=request),
             related_fields=self.related_fields,
             related_querysets=self.get_related_querysets(request, obj),
         )

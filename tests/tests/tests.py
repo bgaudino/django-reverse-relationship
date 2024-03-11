@@ -1,3 +1,7 @@
+from django.contrib.admin.widgets import (
+    FilteredSelectMultiple,
+    RelatedFieldWidgetWrapper,
+)
 from django.contrib.auth import get_user_model
 from django.forms.models import ALL_FIELDS
 from django.test import TestCase
@@ -132,3 +136,10 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
         widget = res.context["adminform"].form.fields["pizza_set"].widget
         self.assertIsInstance(widget, ReverseFilterSelectMultiple)
         self.assertTrue(widget.is_stacked)
+
+    def test_filter_horizontal_for_m2m(self):
+        res = self.client.get(reverse("admin:tests_pizza_add"))
+        widget = res.context["adminform"].form.fields["toppings"].widget
+        self.assertIsInstance(widget, RelatedFieldWidgetWrapper)
+        self.assertIsInstance(widget.widget, FilteredSelectMultiple)
+        self.assertFalse(widget.widget.is_stacked)

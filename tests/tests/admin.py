@@ -6,7 +6,7 @@ from . import models
 
 
 @admin.register(models.Pizza)
-class PizzaAdmin(admin.ModelAdmin):
+class PizzaAdmin(ReverseRelationshipAdmin):
     filter_horizontal = ["toppings"]
 
 
