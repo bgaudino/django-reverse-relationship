@@ -1,7 +1,11 @@
 from functools import partial
 
+from django.db.models import ManyToManyField, ManyToManyRel
 from django.contrib import admin
-from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.contrib.admin.widgets import (
+    FilteredSelectMultiple,
+    RelatedFieldWidgetWrapper,
+)
 from django.forms.models import ALL_FIELDS
 
 from .forms import reverse_relationship_form_factory
@@ -54,8 +58,22 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
             except KeyError:
                 # Invalid field
                 continue
-            widgets[field] = ReverseFilterSelectMultiple(
-                verbose_name=verbose_name,
-                is_stacked=field in filter_vertical,
-            )
+            if isinstance(rel_obj, ManyToManyRel):
+                widgets[field] = RelatedFieldWidgetWrapper(
+                    FilteredSelectMultiple(
+                        verbose_name=verbose_name,
+                        is_stacked=field in filter_vertical,
+                    ),
+                    rel=ManyToManyRel(
+                        field=ManyToManyField(rel_obj.related_model),
+                        to=rel_obj.related_model,
+                        through=rel_obj.through,
+                    ),
+                    admin_site=admin.site,
+                )
+            else:
+                widgets[field] = ReverseFilterSelectMultiple(
+                    verbose_name=verbose_name,
+                    is_stacked=field in filter_vertical,
+                )
         return widgets
