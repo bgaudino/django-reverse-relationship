@@ -54,6 +54,7 @@ def reverse_relationship_form_factory(
                 self.fields[field].initial = getattr(self.instance, field).all()
 
     def _save_m2m(self):
+        super(form, self)._save_m2m()
         for field in related_objects:
             getattr(self.instance, field).set(self.cleaned_data[field])
 

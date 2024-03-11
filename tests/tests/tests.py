@@ -70,6 +70,14 @@ class ReverseRelationshipFormTestCase(BaseTestCase):
         with self.assertRaises(FieldError):
             self.get_form_class(related_fields=["foo"])()
 
+    def test_form_save_regular_m2m_fields(self):
+        Form = reverse_relationship_form_factory(
+            models.Pizza, fields=["name", "toppings"]
+        )
+        form = Form({"name": "California", "toppings": [self.mushrooms.pk]})
+        california = form.save()
+        self.assertQuerySetEqual(california.toppings.all(), [self.mushrooms])
+
 
 class ReverseRelationshipAdminTestCase(BaseTestCase):
     def setUp(self):
