@@ -1,3 +1,4 @@
+from django.core.exceptions import FieldError
 from django.contrib.admin.widgets import (
     FilteredSelectMultiple,
     RelatedFieldWidgetWrapper,
@@ -64,6 +65,10 @@ class ReverseRelationshipFormTestCase(BaseTestCase):
         self.veggie.toppings.add(mushrooms)
         form = self.get_form_class()(instance=mushrooms)
         self.assertQuerySetEqual(form.fields["pizza_set"].initial, [self.veggie])
+
+    def test_invalid_field(self):
+        with self.assertRaises(FieldError):
+            self.get_form_class(related_fields=['foo'])()
 
 
 class ReverseRelationshipAdminTestCase(BaseTestCase):
