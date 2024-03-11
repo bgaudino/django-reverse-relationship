@@ -70,6 +70,10 @@ class ReverseRelationshipFormTestCase(BaseTestCase):
         with self.assertRaises(FieldError):
             self.get_form_class(related_fields=["foo"])()
 
+    def test_non_null_fk_raises_exception(self):
+        with self.assertRaises(FieldError):
+            self.get_form_class(related_fields=["nutrition_set"])
+
     def test_form_save_regular_m2m_fields(self):
         Form = reverse_relationship_form_factory(
             models.Pizza, fields=["name", "toppings"]

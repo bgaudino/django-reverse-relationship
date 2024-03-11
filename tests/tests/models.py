@@ -14,3 +14,7 @@ class Pizza(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Nutrition(models.Model):
+    topping = models.ForeignKey(Topping, on_delete=models.CASCADE)
