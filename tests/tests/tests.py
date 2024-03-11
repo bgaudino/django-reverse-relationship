@@ -68,7 +68,7 @@ class ReverseRelationshipFormTestCase(BaseTestCase):
 
     def test_invalid_field(self):
         with self.assertRaises(FieldError):
-            self.get_form_class(related_fields=['foo'])()
+            self.get_form_class(related_fields=["foo"])()
 
 
 class ReverseRelationshipAdminTestCase(BaseTestCase):
