@@ -163,3 +163,10 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
         self.assertIsInstance(widget, RelatedFieldWidgetWrapper)
         self.assertIsInstance(widget.widget, FilteredSelectMultiple)
         self.assertFalse(widget.widget.is_stacked)
+
+    def test_invalid_related_field(self):
+        related_fields = ToppingAdmin.related_fields
+        ToppingAdmin.related_fields = ["foo"]
+        with self.assertRaises(FieldError):
+            self.client.get(reverse("admin:tests_topping_add"))
+        ToppingAdmin.related_fields = related_fields

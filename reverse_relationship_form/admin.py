@@ -6,6 +6,7 @@ from django.contrib.admin.widgets import (
     FilteredSelectMultiple,
     RelatedFieldWidgetWrapper,
 )
+from django.core.exceptions import FieldError
 from django.forms.models import ALL_FIELDS
 from django.forms.widgets import SelectMultiple
 
@@ -52,8 +53,7 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
             try:
                 rel_obj = related_objects[field]
             except KeyError:
-                # Invalid field
-                continue
+                raise FieldError(f"Invalid reverse related field: {field}")
             if field in filter_fields:
                 widget = FilteredSelectMultiple(
                     verbose_name=rel_obj.related_model._meta.verbose_name_plural,
