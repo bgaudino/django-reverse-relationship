@@ -1,18 +1,15 @@
 from functools import partial
 
-from django.db.models import ManyToManyField, ManyToManyRel
+from django.db.models import ForeignKey, ManyToOneRel, ManyToManyRel, IntegerField
 from django.contrib import admin
 from django.contrib.admin.widgets import (
     FilteredSelectMultiple,
     RelatedFieldWidgetWrapper,
 )
 from django.forms.models import ALL_FIELDS
+from django.forms.widgets import SelectMultiple
 
 from .forms import reverse_relationship_form_factory
-
-
-class ReverseFilterSelectMultiple(FilteredSelectMultiple):
-    template_name = "admin/widgets/reverse_filter_select_multiple.html"
 
 
 class ReverseRelationshipAdmin(admin.ModelAdmin):
@@ -51,29 +48,44 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
         filter_fields = [*filter_horizontal, *filter_vertical]
         related_objects = self.get_related_objects()
         widgets = {}
-        for field in filter_fields:
+        for field in self.related_fields or []:
             try:
                 rel_obj = related_objects[field]
-                verbose_name = rel_obj.related_model._meta.verbose_name_plural
             except KeyError:
                 # Invalid field
                 continue
-            if isinstance(rel_obj, ManyToManyRel):
-                widgets[field] = RelatedFieldWidgetWrapper(
-                    FilteredSelectMultiple(
-                        verbose_name=verbose_name,
-                        is_stacked=field in filter_vertical,
-                    ),
-                    rel=ManyToManyRel(
-                        field=ManyToManyField(rel_obj.related_model),
-                        to=rel_obj.related_model,
-                        through=rel_obj.through,
-                    ),
-                    admin_site=admin.site,
-                )
-            else:
-                widgets[field] = ReverseFilterSelectMultiple(
-                    verbose_name=verbose_name,
+            if field in filter_fields:
+                widget = FilteredSelectMultiple(
+                    verbose_name=rel_obj.related_model._meta.verbose_name_plural,
                     is_stacked=field in filter_vertical,
                 )
+            else:
+                widget = SelectMultiple()
+            if isinstance(rel_obj, ManyToManyRel):
+                rel = ManyToManyRel(
+                    field=rel_obj.field,
+                    to=rel_obj.related_model,
+                    through=rel_obj.through,
+                )
+            elif isinstance(rel_obj, ManyToOneRel):
+                for f in rel_obj.related_model._meta.fields:
+                    if isinstance(f, ForeignKey) and f.related_model is rel_obj.model:
+                        rel = ManyToOneRel(
+                            field=IntegerField(),
+                            to=rel_obj.related_model,
+                            field_name=f.name,
+                        )
+                        break
+                else:
+                    # Invalid field
+                    continue
+            else:
+                # Invalid field
+                continue
+            widgets[field] = RelatedFieldWidgetWrapper(
+                widget=widget,
+                rel=rel,
+                admin_site=admin.site,
+                can_add_related=isinstance(rel_obj, ManyToManyRel),
+            )
         return widgets
