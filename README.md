@@ -85,4 +85,4 @@ Specifying a related field as `related_filter_horizontal` or `related_filter_ver
 
 ## Limitations
 
-While primarily designed for many-to-many relationships, this package can be used for many-to-one relationships if the `ForeignKey` field on the other side is nullable. Removing a model instance from the select widget sets the foreign key field to null, so if it's not nullable you can't remove it. You also can't add entires via pop up for many to one relationships.
+While primarily designed for many-to-many relationships, this package can be used for many-to-one relationships if the `ForeignKey` field on the other side is nullable. Removing a model instance from the select widget sets the foreign key field to null, so if it's not nullable you can't remove it.

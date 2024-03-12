@@ -5,12 +5,12 @@ from django.contrib.admin.widgets import (
 )
 from django.contrib.auth import get_user_model
 from django.forms.models import ALL_FIELDS
+from django.forms.widgets import SelectMultiple
 from django.test import TestCase
 from django.urls import reverse
 
 from . import models
 from .admin import ToppingAdmin
-from reverse_relationship_form.admin import ReverseFilterSelectMultiple
 from reverse_relationship_form.forms import reverse_relationship_form_factory
 
 
@@ -74,6 +74,10 @@ class ReverseRelationshipFormTestCase(BaseTestCase):
         with self.assertRaises(FieldError):
             self.get_form_class(related_fields=["nutrition_set"])
 
+    def test_nullable_fk_is_accepted(self):
+        form = self.get_form_class(related_fields=["price_set"])()
+        self.assertIn("price_set", form.fields)
+
     def test_form_save_regular_m2m_fields(self):
         Form = reverse_relationship_form_factory(
             models.Pizza, fields=["name", "toppings"]
@@ -129,14 +133,13 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
         self.assertContains(res, '<option value="1">Veggie</option>')
         self.assertNotContains(res, '<option value="2">Mediterranean</option>')
 
-    def test_default_widget(self):
+    def test_default_reverse_m2m_widget(self):
         ToppingAdmin.related_filter_horizontal = None
         ToppingAdmin.related_filter_vertical = None
         res = self.client.get(reverse("admin:tests_topping_add"))
-        self.assertNotIsInstance(
-            res.context["adminform"].form.fields["pizza_set"].widget,
-            ReverseFilterSelectMultiple,
-        )
+        widget = res.context["adminform"].form.fields["pizza_set"].widget
+        self.assertIsInstance(widget, RelatedFieldWidgetWrapper)
+        self.assertIsInstance(widget.widget, SelectMultiple)
 
     def test_filter_horizontal(self):
         ToppingAdmin.related_filter_horizontal = ["pizza_set"]

@@ -10,7 +10,7 @@ class Topping(models.Model):
 
 class Pizza(models.Model):
     name = models.CharField(max_length=255)
-    toppings = models.ManyToManyField(Topping)
+    toppings = models.ManyToManyField(Topping, blank=True)
 
     def __str__(self):
         return self.name
@@ -18,3 +18,7 @@ class Pizza(models.Model):
 
 class Nutrition(models.Model):
     topping = models.ForeignKey(Topping, on_delete=models.CASCADE)
+
+
+class Price(models.Model):
+    topping = models.ForeignKey(Topping, on_delete=models.CASCADE, null=True)

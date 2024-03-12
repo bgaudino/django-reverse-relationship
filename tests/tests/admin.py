@@ -12,5 +12,10 @@ class PizzaAdmin(ReverseRelationshipAdmin):
 
 @admin.register(models.Topping)
 class ToppingAdmin(ReverseRelationshipAdmin):
-    related_fields = ["pizza_set"]
-    related_filter_horizontal = ["pizza_set"]
+    related_fields = ["pizza_set", "price_set"]
+    related_filter_horizontal = ["pizza_set", "price_set"]
+
+
+@admin.register(models.Price)
+class PriceAdmin(admin.ModelAdmin):
+    pass

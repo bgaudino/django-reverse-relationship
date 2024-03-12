@@ -73,7 +73,7 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
                         rel = ManyToOneRel(
                             field=IntegerField(),
                             to=rel_obj.related_model,
-                            field_name=f.name,
+                            field_name="id",
                         )
                         break
                 else:
@@ -86,6 +86,5 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
                 widget=widget,
                 rel=rel,
                 admin_site=admin.site,
-                can_add_related=isinstance(rel_obj, ManyToManyRel),
             )
         return widgets
