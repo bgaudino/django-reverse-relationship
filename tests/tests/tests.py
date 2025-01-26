@@ -134,9 +134,7 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
         self.assertNotContains(res, '<option value="2">Mediterranean</option>')
 
     def test_custom_related_labels(self):
-        ToppingAdmin.related_labels = {
-            "pizza_set": "Pizza selection"
-        }
+        ToppingAdmin.related_labels = {"pizza_set": "Pizza selection"}
         res = self.client.get(reverse("admin:tests_topping_add"))
         self.assertContains(res, '<label for="id_pizza_set">Pizza selection:</label>')
 
