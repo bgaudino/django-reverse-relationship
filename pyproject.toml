@@ -1,0 +1,52 @@
+[project]
+name = "django-reverse-relationship"
+version = "0.1.0.dev0"
+description = "A model form factory and admin class that includes reverse related fields"
+authors = [
+    { name = "Brian Gaudino", email = "bgaudino@gmail.com" }
+]
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+requires-python = ">=3.8"
+dependencies = [
+    "Django>=4.2",
+]
+
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+homepage = "https://github.com/bgaudino/django-reverse-relationship"
+repository = "https://github.com/bgaudino/django-reverse-relationship"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["reverse_relationship*"]
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.8.0",
+    "coverage>=7.6.1",
+    "pytest-django>=4.9.0",
+    "pytest>=8.3.4",
+    "tox>=4.24.1",
+]
