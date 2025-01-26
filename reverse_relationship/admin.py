@@ -1,4 +1,5 @@
 from functools import partial
+from typing import Mapping, Optional, Sequence
 
 from django.db.models import ForeignKey, ManyToOneRel, ManyToManyRel, IntegerField
 from django.contrib import admin
@@ -14,25 +15,28 @@ from .forms import reverse_relationship_form_factory
 
 
 class ReverseRelationshipAdmin(admin.ModelAdmin):
-    related_fields = None
-    related_querysets = None
-    related_filter_horizontal = None
-    related_filter_vertical = None
+    related_fields: Optional[Sequence] = None
+    related_querysets: Optional[Mapping] = None
+    related_labels: Optional[Mapping] = None
+    related_filter_horizontal: Optional[Sequence] = None
+    related_filter_vertical: Optional[Sequence] = None
 
     def get_form(self, request, obj=None, **kwargs):
         if request.GET.get("_popup") or request.GET.get("_to_field"):
             return super().get_form(request, obj, **kwargs)
 
-        exclude = self.get_exclude(request, obj) or []
-        exclude.extend(self.get_readonly_fields(request, obj))
+        exclude = self.get_exclude(request, obj) or ()
+        readonly_fields = self.get_readonly_fields(request, obj) or ()
+
         return reverse_relationship_form_factory(
             self.model,
             fields=self.fields or ALL_FIELDS,
-            exclude=exclude,
+            exclude=(*exclude, *readonly_fields),
             widgets=self.get_related_widgets(request, obj),
             formfield_callback=partial(self.formfield_for_dbfield, request=request),
             related_fields=self.related_fields,
             related_querysets=self.get_related_querysets(request, obj),
+            labels=self.related_labels,
         )
 
     def get_related_objects(self):
@@ -40,7 +44,16 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
             obj.get_accessor_name(): obj for obj in self.model._meta.related_objects
         }
 
+    def get_related_fields(self, request, obj=None):
+        """Hook for specifying related fields"""
+        return self.related_querysets
+
     def get_related_querysets(self, request, obj=None):
+        """Hook for specifying customizing querysets for related fields"""
+        return self.related_querysets
+
+    def get_related_labels(self, request, obj=None):
+        """Hook for specifying labels for related fields"""
         return self.related_querysets
 
     def get_related_widgets(self, request, obj=None):

@@ -8,14 +8,17 @@ def reverse_relationship_form_factory(
     form=ModelForm,
     related_fields=None,
     related_querysets=None,
+    related_labels=None,
     **kwargs,
 ):
     if related_fields is None:
         related_fields = []
     if related_querysets is None:
         related_querysets = {}
-    labels = kwargs.get("labels", {})
-    widgets = kwargs.get("widgets", {})
+    labels = kwargs.get("labels") or {}
+    if related_labels:
+        labels.update(related_labels)
+    widgets = kwargs.get("widgets") or {}
 
     form_class = modelform_factory(model, form, **kwargs)
 

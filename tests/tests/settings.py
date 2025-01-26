@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tests",
-    "reverse_relationship",
 ]
 
 MIDDLEWARE = [
