@@ -11,7 +11,7 @@ from django.urls import reverse
 
 from . import models
 from .admin import ToppingAdmin
-from reverse_relationship_form.forms import reverse_relationship_form_factory
+from reverse_relationship.forms import reverse_relationship_form_factory
 
 
 class BaseTestCase(TestCase):

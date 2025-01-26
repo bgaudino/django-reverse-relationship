@@ -9,12 +9,12 @@ install_requires = [
 ]
 
 setup(
-    name="django-reverse-relationship-form",
+    name="django-reverse-relationship",
     version="0.1.0.dev0",
     author="Brian Gaudino",
     author_email="bgaudino@gmail.com",
     description=__doc__,
-    packages=["reverse_relationship_form"],
+    packages=["reverse_relationship"],
     install_requires=install_requires,
     zip_safe=False,
     include_package_data=True,

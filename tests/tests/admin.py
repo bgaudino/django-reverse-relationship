@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from reverse_relationship_form.admin import ReverseRelationshipAdmin
+from reverse_relationship.admin import ReverseRelationshipAdmin
 
 from . import models
 
