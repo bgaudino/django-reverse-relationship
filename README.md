@@ -1,6 +1,6 @@
 # Django Reverse Relationship
-[![Tests](https://github.com/bgaudino/django-reverse-relationship-form/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/bgaudino/django-reverse-relationship-form/actions/workflows/tests.yml)  
-<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>  
+[![Tests](https://github.com/bgaudino/django-reverse-relationship/actions/workflows/tests.yml/badge.svg)](https://github.com/bgaudino/django-reverse-relationship/actions/workflows/tests.yml)
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 ## Rationale  
 Have you ever needed to manage a `ManyToManyField` on both sides of the relationship in the admin and found out that Django does not make this easy?
