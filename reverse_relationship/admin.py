@@ -25,6 +25,9 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
         if request.GET.get("_popup") or request.GET.get("_to_field"):
             return super().get_form(request, obj, **kwargs)
 
+        related_fields = self.get_related_fields(request, obj)
+        related_querysets = self.get_related_querysets(request, obj)
+        related_labels = self.get_related_labels(request, obj)
         exclude = self.get_exclude(request, obj) or ()
         readonly_fields = self.get_readonly_fields(request, obj) or ()
 
@@ -34,9 +37,9 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
             exclude=(*exclude, *readonly_fields),
             widgets=self.get_related_widgets(request, obj),
             formfield_callback=partial(self.formfield_for_dbfield, request=request),
-            related_fields=self.related_fields,
-            related_querysets=self.get_related_querysets(request, obj),
-            labels=self.related_labels,
+            related_fields=related_fields,
+            related_querysets=related_querysets,
+            labels=related_labels,
         )
 
     def get_related_objects(self):
@@ -46,7 +49,7 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
 
     def get_related_fields(self, request, obj=None):
         """Hook for specifying related fields"""
-        return self.related_querysets
+        return self.related_fields
 
     def get_related_querysets(self, request, obj=None):
         """Hook for specifying customizing querysets for related fields"""
@@ -54,7 +57,7 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
 
     def get_related_labels(self, request, obj=None):
         """Hook for specifying labels for related fields"""
-        return self.related_querysets
+        return self.related_labels
 
     def get_related_widgets(self, request, obj=None):
         filter_horizontal = self.related_filter_horizontal or []
