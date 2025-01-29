@@ -28,7 +28,7 @@ class Pizza(models.Model):
 
 
 @admin.register(models.Pizza)
-class PizzaAdmin(ReverseRelationshipAdmin):
+class PizzaAdmin(admin.ModelAdmin):
     fields = ["name", "toppings"]
     filter_horizontal = ["toppings"]
 
@@ -48,7 +48,7 @@ Unknown field(s) (pizzas) specified for Topping
 
 This package solves this problem by providing the `ReverseRelationshipAdmin`:
 
-```
+```python
 from reverse_relationship.admin import ReverseRelationshipAdmin
 from .models import Topping
 
@@ -68,7 +68,7 @@ You can customize the queryset for related fields by passing a dictionary to `re
 
 ```python
 related_querysets = {
-    "pizza_set": Pizza.objects.filter(name__startswith="veggie"),
+    "pizzas": Pizza.objects.filter(name__startswith="veggie"),
 }
 ```
 
@@ -100,7 +100,7 @@ from .models import Topping
 
 ToppingForm = reverse_relationship_form_factory(
     model=Topping,
-    related_fields=["pizza_set"],
+    related_fields=["pizzas"],
 )
 ```
 
@@ -112,8 +112,8 @@ The generated HTML form will look like this:
     <input type="text" name="name" maxlength="255" required id="id_name">
 </div>
 <div>
-    <label for="id_pizza_set">Pizzas:</label>
-    <select name="pizza_set" id="id_pizza_set" multiple>
+    <label for="id_pizzas">Pizzas:</label>
+    <select name="pizzas" id="id_pizzas" multiple>
         <!-- Whatever pizzas are in your database -->
         <option value="1">Veggie</option>
         <option value="2">Cheese</option>
