@@ -21,9 +21,9 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
     related_filter_horizontal: Optional[Sequence] = None
     related_filter_vertical: Optional[Sequence] = None
 
-    def get_form(self, request, obj=None, **kwargs):
+    def get_form(self, request, obj=None, change=False, **kwargs):
         if request.GET.get("_popup") or request.GET.get("_to_field"):
-            return super().get_form(request, obj, **kwargs)
+            return super().get_form(request, obj, change, **kwargs)
 
         related_fields = self.get_related_fields(request, obj)
         related_querysets = self.get_related_querysets(request, obj)
