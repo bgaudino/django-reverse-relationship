@@ -1,6 +1,6 @@
 [project]
 name = "django-reverse-relationship"
-version = "0.1.1.dev0"
+version = "0.1.1"
 description = "A model form factory and admin class that includes reverse related fields"
 authors = [
     { name = "Brian Gaudino", email = "bgaudino@gmail.com" }
