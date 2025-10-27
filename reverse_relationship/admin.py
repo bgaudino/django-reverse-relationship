@@ -42,6 +42,11 @@ class ReverseRelationshipAdmin(admin.ModelAdmin):
             labels=related_labels,
         )
 
+    def get_fields(self, request, obj=None):
+        fields = super().get_fields(request, obj)
+        related_fields = self.get_related_fields(request, obj) or []
+        return [*fields, *related_fields]
+
     def get_related_objects(self):
         return {
             obj.get_accessor_name(): obj for obj in self.model._meta.related_objects
