@@ -136,7 +136,7 @@ class ReverseRelationshipAdminTestCase(BaseTestCase):
     def test_custom_related_labels(self):
         ToppingAdmin.related_labels = {"pizza_set": "Pizza selection"}
         res = self.client.get(reverse("admin:tests_topping_add"))
-        self.assertContains(res, '<label for="id_pizza_set">Pizza selection:</label>')
+        self.assertRegex(res.content.decode(), r'<(label|legend) for="id_pizza_set">Pizza selection:</(label|legend)>')
 
     def test_default_reverse_m2m_widget(self):
         ToppingAdmin.related_filter_horizontal = None
